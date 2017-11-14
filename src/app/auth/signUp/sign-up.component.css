@@ -1,0 +1,20 @@
+.simlink:hover {
+    color: #0000ff;
+    cursor: pointer;
+}
+
+.example-container {
+    display: flex;
+    flex-direction: column;
+
+}
+  
+.example-button-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.example-header {
+    min-height: 64px;
+}

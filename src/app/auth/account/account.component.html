@@ -1,0 +1,32 @@
+<navi-bar></navi-bar>
+<br />
+<div class="container">
+    <div class="example-container mat-elevation-z8">
+
+        <div class="example-header">
+            <mat-form-field>
+              <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+            </mat-form-field>
+        </div>
+
+        <mat-table #table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)">
+          
+          <!-- Column Definitions -->
+          <div *ngFor="let colDef of displayedColumns">
+              <ng-container matColumnDef="{{colDef.id}}">
+                <mat-header-cell class="mat-header" mat-sort-header="{{colDef.id}}" *matHeaderCellDef> {{colDef.display}} </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element[colDef.id]}} </mat-cell>
+              </ng-container>
+          </div>
+      
+          <mat-header-row *matHeaderRowDef="displayedColumnKeys"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumnKeys;"></mat-row>
+        </mat-table>
+
+        <!-- Paginator -->
+        <mat-paginator #paginator
+                [pageSize]="10"
+                [pageSizeOptions]="[5, 10, 20]">
+        </mat-paginator>
+    </div>
+</div>

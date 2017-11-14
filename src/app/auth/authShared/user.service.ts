@@ -17,12 +17,12 @@ export class UserService implements CanActivate {
 
     constructor( private router: Router, private snackBar: MatSnackBar ) {
         firebase.initializeApp({
-            apiKey: "AIzaSyDi08iX0ejPj9OZt-dhLF0ZNmdi6yKHA1I",
-            authDomain: "ng2-testapp.firebaseapp.com",
-            databaseURL: "https://ng2-testapp.firebaseio.com",
-            projectId: "ng2-testapp",
-            storageBucket: "ng2-testapp.appspot.com",
-            messagingSenderId: "1075481487844"
+            apiKey: "",
+            authDomain: "",
+            databaseURL: "",
+            projectId: "",
+            storageBucket: "",
+            messagingSenderId: ""
         });
      }
 

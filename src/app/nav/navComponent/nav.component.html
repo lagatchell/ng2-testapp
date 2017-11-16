@@ -5,13 +5,16 @@
         </div>
         <ul class="nav navbar-nav">
             <li class="active"><a [routerLink]="['']">Home</a></li>
+            <li class="active"><a [routerLink]="['/auth/movies']">Movies</a></li>
+            <li *ngIf="currentUser" class="active"><a [routerLink]="['/auth/rentals']">Rentals</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
             <li><a *ngIf="!currentUser" [routerLink]="['/auth/signup']"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
             <li><a *ngIf="!currentUser" [routerLink]="['/auth/login']"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
             <li *ngIf="currentUser" class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-user"></span> {{currentUser}} <span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                        <li><a [routerLink]="['/auth/account']">My Account</a></li>
+                    <li *ngIf="currentUser"><a [routerLink]="['/auth/create']">Add Movie</a></li>
+                    <li><a [routerLink]="['/auth/profile']">Profile</a></li>
                     <li><a *ngIf="currentUser" (click)="logout()" >Logout</a></li>
                 </ul>
             </li>

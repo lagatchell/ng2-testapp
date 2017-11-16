@@ -1,0 +1,21 @@
+.example-header {
+    min-height: 64px;
+}
+
+.example-header h3 {
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+}
+
+.example-header hr {
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+}
+
+.movieImg {
+    height: 300px;
+}
+
+.footer-bg {
+    background-color: transparent;
+}

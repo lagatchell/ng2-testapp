@@ -3,12 +3,14 @@ import { UserService } from '../authShared/user.service';
 import { MatPaginator, MatTableDataSource } from '@angular/material';
 import { Sort } from '@angular/material';
 
+import { User } from '../authShared/user';
+
 @Component({
-    templateUrl: './account.component.html', 
-    styleUrls: ['./account.component.css']
+    templateUrl: './profile.component.html', 
+    styleUrls: ['./profile.component.css']
 })
 
-export class AccountComponent {
+export class ProfileComponent {
     authUser: any;
     displayName: string;
     displayedColumnKeys = ['uid', 'name', 'email'];
@@ -26,7 +28,7 @@ export class AccountComponent {
             display: 'Email'
         }
     ];
-    dataSource: MatTableDataSource<User>;
+    dataSource: MatTableDataSource<sortableUser>;
     sortedData: any;
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -38,7 +40,7 @@ export class AccountComponent {
     constructor(private userSVC: UserService)
     {
         this.authUser = userSVC.authUser;
-        this.dataSource = new MatTableDataSource<User>(
+        this.dataSource = new MatTableDataSource<sortableUser>(
             [
                 { 
                     uid: userSVC.authUser.uid,
@@ -83,11 +85,11 @@ export class AccountComponent {
     }
 
     updateUser(){
-        this.userSVC.updateUser(this.displayName);
+        //this.userSVC.updateUser();
     }
 }
 
-export interface User {
+export interface sortableUser {
     uid: any;
     name: string;
     email: string;

@@ -6,8 +6,9 @@ import {
     RouterStateSnapshot
 } from '@angular/router';
 import {MatSnackBar} from '@angular/material';
-
 import * as firebase from 'firebase';
+
+import { User } from './user';
 
 @Injectable()
 export class UserService implements CanActivate {
@@ -28,10 +29,10 @@ export class UserService implements CanActivate {
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
         let url: string = state.url;
-        return this.verifyLogin(url);
+        return this.verifyLogin();
     }
 
-    verifyLogin(url: string): boolean {
+    verifyLogin(): boolean {
         if (this.userLoggedIn) { return true; }
 
         this.router.navigate(['/auth/login']);
@@ -39,7 +40,20 @@ export class UserService implements CanActivate {
     }
 
     register(email: string, password: string) {
+        let self = this;
         firebase.auth().createUserWithEmailAndPassword(email, password)
+            .then(function(){
+                self.verifyUser();
+                
+                if(self.authUser)
+                {
+                    firebase.database().ref('users/'+ self.authUser.uid).set ({
+                        name: self.authUser.displayName,
+                        email: self.authUser.email,
+                        photoURL: self.authUser.photoURL
+                    });
+                }
+            })
             .catch(function(error){
                 alert(`${error.message} Please Try Again!`);
             });
@@ -52,34 +66,36 @@ export class UserService implements CanActivate {
             this.loggedInUser = this.authUser.email;
             this.userLoggedIn = true;
             this.router.navigate(['']);
-        }    
+        }
     }
 
     login(loginEmail: string, loginPassword: string) {
+        const self = this;
         firebase.auth().signInWithEmailAndPassword(loginEmail, loginPassword)
         .catch(function(error){
-            alert(`${error.message} Unable to login. Try again!`);
+            self.openSnackBar('Unable to login. Try again!', '');
         });
     }
 
     logout() {
         this.userLoggedIn = false;
         this.loggedInUser = '';
-        this.authUser = {};
-        let self = this;
+        const self = this;
         firebase.auth().signOut().then(function(){
+            self.authUser = {};
             self.router.navigate(['home']);
         }),
-        function(error){
-            alert(`${error.message} Unable to logout. Try again!`);
+        function(error) {
+            self.openSnackBar('Unable to logout. Try again!', '');
         }
-        this.openSnackBar('You have successfuly logged out', '');
+        this.openSnackBar('Logged out', '');
     }
 
-    updateUser(displayName) {
+    updateUser(user: User) {
+
         firebase.auth().currentUser.updateProfile({ 
-            displayName: displayName,
-            photoURL: ''
+            displayName: user.displayName,
+            photoURL: user.photoURL
          });
     }
 

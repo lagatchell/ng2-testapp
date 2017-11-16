@@ -1,0 +1,21 @@
+<navi-bar></navi-bar>
+<br />
+<div class="container">
+    <div class="example-header">
+        <h3>Movies</h3>
+        <hr >
+    </div>
+    <mat-grid-list cols="5" rowHeight="300px" gutterSize="15px">
+        <div *ngFor="let movie of movies">
+            <mat-grid-tile>
+                <mat-card>
+                    <img class="movieImg" [src]="movie?.imgURL" alt="{{movie?.imgTitle}}" />
+                </mat-card>
+                <mat-grid-tile-footer class="grid-footer-bg">
+                    <button mat-raised-button color="accent" style="margin: 2px;" (click)="info(movie)" >Info</button>
+                    <button mat-raised-button color="primary" style="margin: 2px;" (click)="rent(movie)" >Rent</button>
+                </mat-grid-tile-footer>
+            </mat-grid-tile>
+        </div>   
+    </mat-grid-list>
+</div>

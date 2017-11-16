@@ -1,0 +1,22 @@
+.example-header {
+    min-height: 64px;
+}
+
+.example-header h3 {
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+}
+
+.example-header hr {
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+}
+
+.movieImg {
+    height: 300px;
+}
+
+.mat-grid-tile .mat-grid-tile-footer {
+    background-color: transparent;
+    background: transparent;
+}

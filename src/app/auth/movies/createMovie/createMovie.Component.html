@@ -1,0 +1,65 @@
+<navi-bar></navi-bar>
+<div class="container">
+    <mat-card>
+        <div class="row" >
+            <div class="col-sm-6" >
+                    <div class="example-container">
+                    <div class="example-header">
+                        <h3>Add Movie</h3>
+                    </div>
+                    <!-- Movie Title -->
+                    <mat-form-field>
+                        <input matInput placeholder="Title" id="title" [(ngModel)]="movieTitle" name="movieTitle" required #title="ngModel">
+                    </mat-form-field>
+                    <div [hidden]="title.valid || title.pristine" class="alert alert-danger">
+                        Title is required
+                    </div>
+                    <br />
+                    <!-- Movie Description -->
+                    <mat-form-field>
+                        <textarea matInput placeholder="Short Description" id="movieDescription" [(ngModel)]="movieDescription" name="movieDescription" style="min-height: 50px;" required #des="ngModel"></textarea>
+                    </mat-form-field>
+                    <div [hidden]="des.valid || des.pristine" class="alert alert-danger">
+                        Description is required
+                    </div>
+                    <br />
+                    <!-- Movie Duration -->
+                    <mat-form-field>
+                        <input type="number" matInput placeholder="Duration" id="movieDuration" [(ngModel)]="movieDuration" name="movieDuration" required #dur="ngModel">    
+                    </mat-form-field>
+                    <div [hidden]="dur.valid || dur.pristine" class="alert alert-danger">
+                        <p *ngIf="!dur.valid">
+                            Duration must be a number
+                        </p>
+                        <p *ngIf="!dur.pristine">
+                            Duration is required
+                        </p>
+                    </div>
+                    <br />
+                    <!-- Movie Image Upload -->
+                    <div class="img-container"> 
+                        <div class="upload-container" >
+                            <label>Upload Movie Poster: </label><br />
+                            <input type="file" (change)="fileLoad($event)">
+                        </div>
+                        <br />
+                        <div *ngIf="invalidUpload" class="alert alert-danger">
+                            <label>Invalid file type</label>
+                            <p>Accepted file types: PNG, JPG</p>
+                        </div>
+                    </div>
+                    <br />
+                    <!-- Buttons -->
+                    <div class="button-row">
+                        <button mat-raised-button color="primary" (click)="create()" >Create</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6" >
+                <div class="img-preview-container" >
+                    <img class="img-preview" *ngIf="movieImg" [src] = "movieImg" alt="Image preview...">
+                </div>
+            </div>
+        </div>
+    </mat-card>
+</div>

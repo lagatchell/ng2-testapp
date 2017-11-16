@@ -1,0 +1,21 @@
+.img-container {
+    
+}
+
+.upload-container {
+    text-align: left;
+}
+
+.img-preview-container {
+    text-align: left;
+    float: right;
+}
+
+.img-preview {
+    width: 100%;
+    border: solid 2px #686868;
+}
+
+mat-form-field {
+    width: 100%;
+}

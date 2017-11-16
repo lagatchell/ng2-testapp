@@ -3,23 +3,23 @@
   <mat-card>
     <div class="example-container">
       <div class="example-header">
-          <h3>Logon to your Account</h3>
+          <h3>Log In</h3>
       </div>
       <!-- Username -->
       <mat-form-field>
-        <input matInput placeholder="Username" id="email" [(ngModel)]="email" name="email" required #em="ngModel">
-        <div [hidden]="em.valid || em.pristine" class="alert alert-danger">
-          Email is required
-        </div>
+        <input matInput placeholder="Email" id="email" [(ngModel)]="email" name="email" required #em="ngModel">
       </mat-form-field>
+      <div [hidden]="em.valid || em.pristine" class="alert alert-danger">
+          Email is required
+      </div>
       <br />
       <!-- Password -->
       <mat-form-field>
           <input  matInput placeholder="Password" type="password" id="password1" [(ngModel)]="password1" name="password1" required #pwd1="ngModel">
-          <div [hidden]="pwd1.valid || pwd1.pristine" class="alert alert-danger">
-            Password required
-          </div>
       </mat-form-field>
+      <div [hidden]="pwd1.valid || pwd1.pristine" class="alert alert-danger">
+          Password required
+      </div>
       <br />
       <!-- Buttons -->
       <div class="button-row">

@@ -7,6 +7,8 @@
             <li class="active"><a [routerLink]="['']">Home</a></li>
             <li class="active"><a [routerLink]="['/auth/movies']">Movies</a></li>
             <li *ngIf="currentUser" class="active"><a [routerLink]="['/auth/rentals']">Rentals</a></li>
+            <li *ngIf="currentUser" class="active"><a [routerLink]="['/auth/wishlist']">Wishlist</a></li>
+            <li *ngIf="currentUser" class="active"><a [routerLink]="['/auth/history']">History</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
             <li><a *ngIf="!currentUser" [routerLink]="['/auth/signup']"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>

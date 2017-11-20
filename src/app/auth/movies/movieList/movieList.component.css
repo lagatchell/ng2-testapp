@@ -20,3 +20,11 @@
     background-color: transparent;
     background: transparent;
 }
+
+.mat-grid-tile .mat-grid-tile-footer .movie-btn {
+    margin: 2px;
+}
+
+.mat-grid-tile {
+    box-shadow: 280ms cubic-bezier(.4,0,.2,1);
+}

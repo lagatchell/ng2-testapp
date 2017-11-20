@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
 import { UserService } from '../authShared/user.service';
 import { MatPaginator, MatTableDataSource } from '@angular/material';
 import { Sort } from '@angular/material';
@@ -12,85 +12,53 @@ import { User } from '../authShared/user';
 
 export class ProfileComponent {
     authUser: any;
-    displayName: string;
-    displayedColumnKeys = ['uid', 'name', 'email'];
-    displayedColumns = [
-        {
-            id: 'uid',
-            display: 'User ID'
-        }, 
-        {
-            id: 'name',
-            display: 'Name'
-        }, 
-        {
-            id: 'email',
-            display: 'Email'
-        }
-    ];
-    dataSource: MatTableDataSource<sortableUser>;
-    sortedData: any;
-
-    @ViewChild(MatPaginator) paginator: MatPaginator;
-
-    ngAfterViewInit() {
-        this.dataSource.paginator = this.paginator;
-    }
+    userDisplayName: string;
+    userEmail: string;
+    userPassword: string;
+    profilePicTitle: string;
+    profilePic: any;
+    invalidUpload: boolean;
 
     constructor(private userSVC: UserService)
     {
         this.authUser = userSVC.authUser;
-        this.dataSource = new MatTableDataSource<sortableUser>(
-            [
-                { 
-                    uid: userSVC.authUser.uid,
-                    name: userSVC.authUser.displayName,
-                    email: userSVC.authUser.email
-                }
-            ]
-        );
-        this.sortedData = this.dataSource.data.slice();
+        this.userDisplayName = this.authUser.displayName;
+        this.userEmail = this.authUser.email;
+        this.profilePic = this.authUser.photoURL;
+        console.log(this.profilePic);
     }
 
-    applyFilter(filterValue: string)
-    {
-        filterValue = filterValue.trim(); // Remove whitespace
-        filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
-        this.dataSource.filter = filterValue;
-    }
+    fileLoad($event: any) {
+        let myReader:FileReader = new FileReader();
+        let file:File = $event.target.files[0];
+        let fileType = file.name.split('.')[1];
 
-    sortData(sort: Sort) {
-        const data = this.dataSource.data.slice();
-        const self = this;
+        if(fileType.toLowerCase() == "png" || fileType.toLowerCase() == "jpg")
+        {
+            this.invalidUpload = false;
+            this.profilePicTitle = file.name; 
+            myReader.readAsDataURL(file);
 
-        if (!sort.active || sort.direction == '') {
-            this.sortedData = data;
-            return;
-          }
-      
-          this.sortedData = data.sort((a, b) => {
-            let isAsc = sort.direction == 'asc';
-            switch (sort.active) {
-              case 'uid': return self.compare(a.uid, b.uid, isAsc);
-              case 'name': return self.compare(+a.name, +b.name, isAsc);
-              case 'email': return self.compare(+a.email, +b.email, isAsc);
-              default: return 0;
+            myReader.onload = (e: any) => {
+                this.profilePic = e.target.result;
             }
-          });
+        }
+        else {
+            this.invalidUpload = true;
+            $event.target.value = "";
+        }
     }
+    
 
-    compare(a, b, isAsc)
-    {
-        return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+    updateUser() {
+
+        let updatedUser: User = {
+            displayName: this.userDisplayName,
+            email: this.userEmail,
+            photoURL: this.profilePic,
+            id: this.authUser.uid
+        }
+
+        this.userSVC.updateUser(updatedUser, this.userPassword);
     }
-
-    updateUser(){
-        //this.userSVC.updateUser();
-    }
-}
-
-export interface sortableUser {
-    uid: any;
-    name: string;
-    email: string;
 }

@@ -21,6 +21,7 @@ export class MovieService {
                 let newMovie = dbRef.push();
                 newMovie.set ({
                     title: movie.title,
+                    duration: movie.duration,
                     shortDescription: movie.shortDescription,
                     imgTitle: movie.imgTitle,
                     imgURL: url,

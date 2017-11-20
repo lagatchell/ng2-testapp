@@ -91,12 +91,26 @@ export class UserService implements CanActivate {
         this.openSnackBar('Logged out', '');
     }
 
-    updateUser(user: User) {
+    updateUser(user: User, newPassword) {
 
-        firebase.auth().currentUser.updateProfile({ 
-            displayName: user.displayName,
-            photoURL: user.photoURL
-         });
+        let storageRef = firebase.storage().ref();
+        storageRef.child(`images/users/${user.id}`).putString(user.photoURL, 'data_url');
+    
+        let path = storageRef.child(`images/users/${user.id}`).fullPath;
+
+        storageRef.child(path).getDownloadURL().then(function(url){
+            firebase.auth().currentUser.updateProfile({ 
+                displayName: user.displayName,
+                photoURL: url
+             });
+        });
+
+        if(typeof(newPassword) != 'undefined' && newPassword != null && newPassword != "")
+        {
+            firebase.auth().currentUser.updatePassword(newPassword).catch(function(error){
+                console.log(error.message);
+            })
+        }
     }
 
     openSnackBar(message: string, action: string) {

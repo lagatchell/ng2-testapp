@@ -12,7 +12,7 @@ export class CreateMovieComponent {
 
     movieTitle: string;
     movieDescription: string;
-    movieDuration: number;
+    movieDuration: string;
     movieImgTitle: string;
     movieImg: any;
     invalidUpload: boolean;

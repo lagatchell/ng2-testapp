@@ -10,16 +10,16 @@ export class WishListService {
         public snackBar: MatSnackBar
     ){}
 
-    addMovie(userID, movieID) {
+    addMovie(userID, movie) {
         const self = this;
         
         let dbRef = firebase.database().ref('wishlist/'+ userID);
         let rentedMovie = dbRef.push();
         rentedMovie.set ({
-            movieId: movieID
+            movieId: movie.id
         });
 
-        self.openSnackBar('Movie has been added to wish list','');
+        self.openSnackBar(movie.title + ' has been added to your wish list','');
     }
 
     removeMovie(userID, movieID) {

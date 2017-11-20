@@ -7,13 +7,13 @@
     </div>
     <mat-grid-list cols="5" rowHeight="300px" gutterSize="15px">
         <div *ngFor="let movie of movies">
-            <mat-grid-tile>
+            <mat-grid-tile class="grid-tile" >
                 <mat-card>
                     <img class="movieImg" [src]="movie?.imgURL" alt="{{movie?.imgTitle}}" />
                 </mat-card>
                 <mat-grid-tile-footer class="grid-footer-bg">
-                    <button mat-raised-button color="accent" style="margin: 2px;" (click)="info(movie)" >Info</button>
-                    <button mat-raised-button color="primary" style="margin: 2px;" (click)="rent(movie)" >Rent</button>
+                    <button mat-raised-button color="accent" class="movie-btn" (click)="info(movie)" >Info</button>
+                    <button mat-raised-button color="primary" class="movie-btn" (click)="rent(movie)" >Rent</button>
                 </mat-grid-tile-footer>
             </mat-grid-tile>
         </div>   

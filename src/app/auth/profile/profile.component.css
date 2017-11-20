@@ -1,29 +1,21 @@
-.example-container {
-    display: flex;
-    flex-direction: column;
-    max-height: 500px;
-    min-width: 300px;
+.img-container {
+    
 }
 
-.example-header {
-    min-height: 64px;
-    padding: 8px 24px 0;
+.upload-container {
+    text-align: left;
 }
 
-.mat-table {
-    overflow: auto;
-    max-height: 500px;
+.img-preview-container {
+    text-align: left;
+    float: right;
 }
 
-.mat-form-field {
-    font-size: 14px;
+.img-preview {
     width: 100%;
+    border: solid 2px #686868;
 }
 
-.mat-header:hover {
-    color: #337ab7;
-}
-
-.mat-header:focus {
-    color: #337ab7;
+mat-form-field {
+    width: 100%;
 }

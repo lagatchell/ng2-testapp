@@ -1,6 +1,26 @@
 {
   "rules": {
-    ".read": "auth != null",
-    ".write": "auth != null"
+    "movies": {
+      ".read": true,
+    	".write": "auth != null"
+    },
+    "rented": {
+      "$uid": {
+        ".read": "auth != null && auth.uid == $uid",
+        ".write": "auth != null && auth.uid == $uid"
+      }
+    },
+    "wishlist": {
+      "$uid": {
+        ".read": "auth != null && auth.uid == $uid",
+        ".write": "auth != null && auth.uid == $uid"
+      }
+    },
+    "history": {
+      "$uid": {
+        ".read": "auth != null && auth.uid == $uid",
+        ".write": "auth != null && auth.uid == $uid"
+      }
+    }
   }
 }

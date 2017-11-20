@@ -11,6 +11,8 @@ import { ProfileComponent } from './profile/profile.component';
 import { CreateMovieComponent } from './movies/createMovie/createMovie.component';
 import { MovieListComponent, InfoDialog } from './movies/movieList/movieList.component';
 import { RentComponent, rentInfoDialog } from './rent/rent.component';
+import { HistoryComponent } from './history/history.component';
+import { WishListComponent } from './wishlist/wishlist.component';
 
 import { MaterialDesignModule } from '../shared/mat.module';
 import { UserService } from './authShared/user.service';
@@ -25,7 +27,9 @@ const AuthRoutes: Routes = [
         component: AuthComponent, 
         children: [
             { path: 'movies', component: MovieListComponent },
+            { path: 'wishlist', component: WishListComponent, canActivate: [UserService] },
             { path: 'rentals', component: RentComponent, canActivate: [UserService] },
+            { path: 'history', component: HistoryComponent, canActivate: [UserService] },
             { path: 'create', component: CreateMovieComponent, canActivate: [UserService] },
             { path: 'profile', component: ProfileComponent, canActivate: [UserService] },
             { path: 'signup', component: SignUpComponent },
@@ -53,6 +57,8 @@ const AuthRoutes: Routes = [
         CreateMovieComponent,
         MovieListComponent,
         RentComponent,
+        HistoryComponent,
+        WishListComponent,
         InfoDialog,
         rentInfoDialog
     ],

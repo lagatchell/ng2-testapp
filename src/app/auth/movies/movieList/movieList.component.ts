@@ -5,6 +5,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { MovieService } from '../../authShared/movie.service';
 import { UserService } from '../../authShared/user.service';
 import { RentService } from '../../authShared/rent.service';
+import { WishListService } from '../../authShared/wishlist.service';
 import { Movie } from '../../authShared/movie'; 
 
 @Component({
@@ -53,7 +54,8 @@ export class MovieListComponent {
             data: { 
                 title: movie.title, 
                 description: movie.shortDescription,
-                duration: movie.duration
+                duration: movie.duration,
+                id: movie.id
             }
         });
     }
@@ -74,18 +76,32 @@ export class MovieListComponent {
         </div>
         <div mat-dialog-actions>
             <button mat-raised-button (click)="onNoClick()" tabindex="-1">Close</button>
+            <button mat-raised-button color="accent" (click)="addToFavorites(data);" tabindex="-1">Add to Favorites</button>
         </div>
     `,
   })
+
+
   export class InfoDialog {
-  
+  user: any;
+
     constructor(
         public dialogRef: MatDialogRef<InfoDialog>,
-        @Inject(MAT_DIALOG_DATA) public data: any
+        @Inject(MAT_DIALOG_DATA) public data: any,
+        public wishlistSVC: WishListService,
+        public userSVC: UserService,
     ) { }
+
+    ngOnInit(){
+        this.user = this.userSVC.authUser;
+    }
 
     onNoClick(): void {
         this.dialogRef.close();
+    }
+
+    addToFavorites(movie) {
+        this.wishlistSVC.addMovie(this.user.uid, movie);
     }
   
   }

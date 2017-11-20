@@ -1,32 +1,67 @@
 <navi-bar></navi-bar>
 <br />
 <div class="container">
-    <div class="example-container mat-elevation-z8">
-
-        <div class="example-header">
-            <mat-form-field>
-              <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
-            </mat-form-field>
+    <mat-card>
+        <div class="row" >
+            <div class="col-sm-6" >
+                    <div class="example-container">
+                    <div class="example-header">
+                        <h3>Profile</h3>
+                    </div>
+                    <!-- User Display Name -->
+                    <mat-form-field>
+                        <input matInput placeholder="Name" id="title" [(ngModel)]="userDisplayName" name="userDisplayName" 
+                        value="{{userDisplayName}}"
+                        required #name="ngModel">
+                    </mat-form-field>
+                    <div [hidden]="name.valid || name.pristine" class="alert alert-danger">
+                        Name is required
+                    </div>
+                    <br />
+                    <!-- User Username/Email -->
+                    <mat-form-field>
+                        <input matInput placeholder="Email" id="email" [(ngModel)]="userEmail" name="userEmail" 
+                        value="{{userEmail}}"
+                        required #em="ngModel">
+                    </mat-form-field>
+                    <div [hidden]="em.valid || em.pristine" class="alert alert-danger">
+                        Email is required
+                    </div>
+                    <br />
+                    <!-- User Password -->
+                    <mat-form-field>
+                        <input matInput type="password" placeholder="Password" id="password" [(ngModel)]="userPassword" name="userPassword" 
+                        value="{{userPassword}}"
+                        #pass="ngModel">
+                    </mat-form-field>
+                    <div [hidden]="pass.valid || pass.pristine" class="alert alert-danger">
+                        Password is required
+                    </div>
+                    <br />
+                    <!-- User Image Upload -->
+                    <div class="img-container"> 
+                        <div class="upload-container" >
+                            <label>Upload Picture: </label><br />
+                            <input type="file" (change)="fileLoad($event)">
+                        </div>
+                        <br />
+                        <div *ngIf="invalidUpload" class="alert alert-danger">
+                            <label>Invalid file type</label>
+                            <p>Accepted file types: PNG, JPG</p>
+                        </div>
+                    </div>
+                    <br />
+                    <!-- Buttons -->
+                    <div class="button-row">
+                        <button mat-raised-button color="primary" (click)="updateUser()" >Save</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6" >
+                <div class="img-preview-container" >
+                    <img class="img-preview" *ngIf="profilePic" [src] = "profilePic" alt="Image preview...">
+                </div>
+            </div>
         </div>
-
-        <mat-table #table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)">
-          
-          <!-- Column Definitions -->
-          <div *ngFor="let colDef of displayedColumns">
-              <ng-container matColumnDef="{{colDef.id}}">
-                <mat-header-cell class="mat-header" mat-sort-header="{{colDef.id}}" *matHeaderCellDef> {{colDef.display}} </mat-header-cell>
-                <mat-cell *matCellDef="let element"> {{element[colDef.id]}} </mat-cell>
-              </ng-container>
-          </div>
-      
-          <mat-header-row *matHeaderRowDef="displayedColumnKeys"></mat-header-row>
-          <mat-row *matRowDef="let row; columns: displayedColumnKeys;"></mat-row>
-        </mat-table>
-
-        <!-- Paginator -->
-        <mat-paginator #paginator
-                [pageSize]="10"
-                [pageSizeOptions]="[5, 10, 20, 50, 75, 100]">
-        </mat-paginator>
-    </div>
+    </mat-card>
 </div>

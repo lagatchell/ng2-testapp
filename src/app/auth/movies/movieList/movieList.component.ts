@@ -21,7 +21,6 @@ export class MovieListComponent {
     constructor(
         public movieSVC: MovieService,
         public userSVC: UserService,
-        public rentSVC: RentService,
         public dialog: MatDialog
     ){}
 
@@ -37,14 +36,6 @@ export class MovieListComponent {
                 let tmp: string[] = snapshot.val();
                 this.movies = Object.keys(tmp).map(key => tmp[key])
             });
-    }
-
-    rent(movie) {
-        this.userSVC.verifyLogin();
-        if(this.userSVC.loggedInUser)
-        {
-            this.rentSVC.rentMovie(this.user.uid, movie);
-        } 
     }
 
     info(movie: Movie): void {
@@ -76,7 +67,8 @@ export class MovieListComponent {
         </div>
         <div mat-dialog-actions>
             <button mat-raised-button (click)="onNoClick()" tabindex="-1">Close</button>
-            <button mat-raised-button color="accent" (click)="addToFavorites(data);" tabindex="-1">Add to Favorites</button>
+            <button mat-raised-button color="primary" (click)="rent(data)" tabindex="-1" >Rent</button>
+            <button mat-raised-button color="accent" (click)="addToFavorites(data);" tabindex="-1">Add to Wishlist</button>
         </div>
     `,
   })
@@ -89,11 +81,20 @@ export class MovieListComponent {
         public dialogRef: MatDialogRef<InfoDialog>,
         @Inject(MAT_DIALOG_DATA) public data: any,
         public wishlistSVC: WishListService,
+        public rentSVC: RentService,
         public userSVC: UserService,
     ) { }
 
     ngOnInit(){
         this.user = this.userSVC.authUser;
+    }
+
+    rent(movie) {
+        this.userSVC.verifyLogin();
+        if(this.userSVC.loggedInUser)
+        {
+            this.rentSVC.rentMovie(this.user.uid, movie);
+        } 
     }
 
     onNoClick(): void {

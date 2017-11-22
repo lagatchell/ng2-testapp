@@ -16,7 +16,7 @@
         <mat-table #table [dataSource]="dataSource" matSort >
           
           <!-- Column Definitions -->
-          <div *ngFor="let colDef of displayedColumns">
+          <div style="background-color: #686868;" *ngFor="let colDef of displayedColumns">
               <ng-container matColumnDef="{{colDef.id}}">
                 <mat-header-cell class="mat-header" mat-sort-header *matHeaderCellDef> {{colDef.display}} </mat-header-cell>
                 <mat-cell *matCellDef="let element"> {{element[colDef.id]}} </mat-cell>
@@ -24,12 +24,12 @@
           </div>
       
           <mat-header-row *matHeaderRowDef="displayedColumnKeys"></mat-header-row>
-          <mat-row *matRowDef="let row; columns: displayedColumnKeys;"></mat-row>
+          <mat-row class="data-row" *matRowDef="let row; columns: displayedColumnKeys;"></mat-row>
         </mat-table>
 
         <!-- Paginator -->
         <mat-paginator #paginator
-                [pageSize]="10"
+                [pageSize]="5"
                 [pageSizeOptions]="[5, 10, 20, 50, 75, 100]">
         </mat-paginator>
     </div>

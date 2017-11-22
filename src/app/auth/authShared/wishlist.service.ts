@@ -14,20 +14,29 @@ export class WishListService {
         const self = this;
         
         let dbRef = firebase.database().ref('wishlist/'+ userID);
-        let rentedMovie = dbRef.push();
-        rentedMovie.set ({
-            movieId: movie.id
+        let wishlistMovie = dbRef.push();
+        wishlistMovie.set ({
+            movieId: movie.id,
+            id: wishlistMovie.key
+        })
+        .then(function(){
+            self.openSnackBar(movie.title + ' has been added to your wish list','');
+        })
+        .catch(function(error){
+            console.log(error.message);
         });
-
-        self.openSnackBar(movie.title + ' has been added to your wish list','');
     }
 
-    removeMovie(userID, movieID) {
+    removeMovie(userID, wishlistKey, movieTitle) {
         const self = this;
 
-        let dbRef = firebase.database().ref('wishlist/'+userID).child(movieID).remove();
-
-        self.openSnackBar('Movie has been removed from wish list','');
+        let dbRef = firebase.database().ref('wishlist/'+userID).child(wishlistKey).remove()
+            .then(function(){
+                self.openSnackBar(movieTitle + ' has been removed from your wish list','');
+            })
+            .catch(function(error){
+                console.log(error.message);
+            });
     }
 
     openSnackBar(message: string, action: string) {

@@ -5,19 +5,15 @@
         <h3>Current Rentals</h3>
         <hr >
     </div>
-    <div [hidden]="noMovies" style="text-align: center; color: #686868;" >
+    <div [hidden]="movies.length > 0" style="text-align: center; color: #686868;" >
         <h3>No Movies</h3>
     </div>
     <mat-grid-list cols="5" rowHeight="300px" gutterSize="15px">
         <div *ngFor="let movie of movies">
-            <mat-grid-tile id="{{movie.id}}">
+            <mat-grid-tile id="{{movie.id}}" style="cursor: pointer;" (click)="info(movie)" >
                 <mat-card>
                     <img class="movieImg" [src]="movie?.imgURL" alt="{{movie?.imgTitle}}" />
                 </mat-card>
-                <mat-grid-tile-footer class="footer-bg">
-                    <button mat-raised-button color="accent" style="margin: 2px;" (click)="info(movie)" >Info</button>
-                    <button mat-raised-button color="primary" style="margin: 2px;" (click)="return(movie)" >Return</button>
-                </mat-grid-tile-footer>
             </mat-grid-tile>
         </div>
     </mat-grid-list>

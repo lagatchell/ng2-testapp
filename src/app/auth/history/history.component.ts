@@ -29,7 +29,7 @@ export class HistoryComponent {
         },
         {
             id: 'returnDate',
-            display: 'Return Date'
+            display: 'Returned Date'
         }
     ];
     dataSource: MatTableDataSource<RentedMovie>;

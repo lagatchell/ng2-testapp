@@ -12,7 +12,7 @@ import { CreateMovieComponent } from './movies/createMovie/createMovie.component
 import { MovieListComponent, InfoDialog } from './movies/movieList/movieList.component';
 import { RentComponent, rentInfoDialog } from './rent/rent.component';
 import { HistoryComponent } from './history/history.component';
-import { WishListComponent } from './wishlist/wishlist.component';
+import { WishListComponent, EditDialog } from './wishlist/wishlist.component';
 
 import { MaterialDesignModule } from '../shared/mat.module';
 import { UserService } from './authShared/user.service';
@@ -60,9 +60,14 @@ const AuthRoutes: Routes = [
         HistoryComponent,
         WishListComponent,
         InfoDialog,
-        rentInfoDialog
+        rentInfoDialog,
+        EditDialog
     ],
-    entryComponents: [InfoDialog, rentInfoDialog],
+    entryComponents: [
+        InfoDialog, 
+        rentInfoDialog, 
+        EditDialog
+    ],
     providers: [
         UserService,
         MovieService,

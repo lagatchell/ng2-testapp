@@ -1,11 +1,19 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
-import { Sort } from '@angular/material';
+import { Component, OnInit, ViewChild, Inject } from '@angular/core';
+import { 
+    MatPaginator, 
+    MatTableDataSource, 
+    MatSort, 
+    MatDialog, 
+    MatDialogRef, 
+    MAT_DIALOG_DATA, 
+    Sort 
+} from '@angular/material';
 
 import * as firebase from 'firebase';
 
 import { UserService } from '../authShared/user.service';
 import { WishListService } from '../authShared/wishlist.service';
+import { RentService } from '../authShared/rent.service';
 import { Movie } from '../authShared/movie';
 
 @Component({
@@ -27,14 +35,13 @@ export class WishListComponent {
     movieIDs: any[];
     wishlistMovies: any[];
 
-    constructor(private userSVC: UserService, public wishlistSVC: WishListService)
+    constructor(private userSVC: UserService, public wishlistSVC: WishListService, public dialog: MatDialog)
     { 
         this.authUser = this.userSVC.authUser;
         this.wishlistMovies = new Array<any>();
     }
 
     ngOnInit() {
-        //get data
         this.getWishlistMovieIDs();
     }
 
@@ -73,6 +80,30 @@ export class WishListComponent {
             });
     }
 
+    edit(row) {
+        const self = this;
+        let dialogRef = this.dialog.open(EditDialog, {
+            height: '150px',
+            width: '350px',
+            data: { 
+                title: row.title,
+                movieId: row.movieId,
+                id: row.id,
+                remove: function(){
+                    for(var i=0, len=self.dataSource.data.length; i<len; i++)
+                    {
+                        if(self.dataSource.data[i].id === row.id)
+                        {
+                            self.dataSource.data.splice(i, 1);
+                            let newDataSource = self.dataSource.data;
+                            self.dataSource = new MatTableDataSource<any>(newDataSource);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
     getWishlist(self) {
         return new Promise(function(resolve, reject) {
             let index;
@@ -85,13 +116,11 @@ export class WishListComponent {
                         let tmp = snapshot.val();
                         let transform = Object.keys(tmp).map(key => tmp[key]);
                         let title = transform[5];
-                        let desc = transform[4];
-                        let duration = transform[0];
-                        let imgTitle = transform[2];
-                        let img = transform[3];
                         let id = transform[1];
                         let wishlistMovie: any = {
-                            title: title
+                            title: title,
+                            movieId: id,
+                            id: self.movieIDs[i].id
                         };
                         self.wishlistMovies.push(wishlistMovie);
                         
@@ -112,3 +141,53 @@ export class WishListComponent {
         this.dataSource.filter = filterValue;
     }
 }
+
+@Component({
+    selector: 'edit-dialog',
+    template: `
+        <h1 mat-dialog-title>{{data.title}}</h1>
+        <div mat-dialog-content>
+        </div>
+        <div mat-dialog-actions>
+            <button type="button" mat-raised-button (click)="onNoClick()" tabindex="-1">Close</button>
+            <button type="button" mat-raised-button color="accent" (click)="rent(data)" tabindex="-1">Rent</button>
+            <button type="button" mat-raised-button color="primary" (click)="remove(data)" tabindex="-1">Remove</button>
+        </div>
+    `,
+  })
+
+
+  export class EditDialog {
+  user: any;
+
+    constructor(
+        public dialogRef: MatDialogRef<EditDialog>,
+        @Inject(MAT_DIALOG_DATA) public data: any,
+        public userSVC: UserService,
+        public wishlistSVC: WishListService,
+        public rentSVC: RentService
+    ) { }
+
+    ngOnInit(){
+        this.user = this.userSVC.authUser;
+    }
+
+    remove(data) {
+        this.wishlistSVC.removeMovie(this.user.uid, data.id, data.title);
+        this.onNoClick();
+        data.remove();
+    }
+
+    rent(data) {
+        this.rentSVC.rentMovie(this.user.uid, 
+        {
+            title: data.title,
+            id: data.movieId
+        });
+    }
+
+    onNoClick(): void {
+        this.dialogRef.close();
+    }
+  
+  }

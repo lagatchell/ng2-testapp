@@ -1,4 +1,5 @@
-import { Component, OnInit, Inject, Renderer } from '@angular/core';
+import { Component, OnInit, Inject} from '@angular/core';
+import { Router } from '@angular/router'; 
 import * as firebase from 'firebase';
 
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
@@ -17,14 +18,14 @@ export class RentComponent {
     movies: Movie[];
     user: any;
     rentedMovieKey: any;
-    noMovies: boolean = true;
 
     constructor(
         public userSVC: UserService,
         public rentSVC: RentService,
         public dialog: MatDialog
     ){
-        this.movies = new Array<Movie>();
+        this.movies = [];
+        this.movieIDs = [];
         this.rentedMovieKey = {};
     }
 
@@ -48,7 +49,6 @@ export class RentComponent {
                 }
             })
             .catch(function(){
-                self.noMovies = false;
             });
     }
 
@@ -74,28 +74,38 @@ export class RentComponent {
     }
 
     info(movie: Movie): void {
+        const self = this;
         let dialogRef = this.dialog.open(rentInfoDialog, {
             height: '400px',
             width: '600px',
             data: { 
                 title: movie.title, 
                 description: movie.shortDescription,
-                duration: movie.duration
+                duration: movie.duration,
+                id: movie.id,
+                return: function(movieData){
+
+                    let returnMovie = {
+                        title: movieData.title,
+                        shortDescription: movieData.shortDescription,
+                        duration: movieData.duration,
+                        id: movieData.id
+                    };
+
+                    let rentedKey = self.rentedMovieKey[movie.id];
+                    self.rentSVC.returnMovie(self.user.uid, rentedKey, returnMovie);
+
+                    let movieIDIndex = self.movieIDs.indexOf(returnMovie.id);
+                    let moviesIndex = self.movies.indexOf(returnMovie);
+            
+                    self.movieIDs.splice(movieIDIndex, 1);
+                    self.movies.splice(moviesIndex, 1);
+                }
             }
         });
     }
-
-    return(movie: Movie) {
-        let rentedKey = this.rentedMovieKey[movie.id];
-        this.rentSVC.returnMovie(this.user.uid, rentedKey, movie);
-        this.movies = [];
-        this.movieIDs = [];
-        this.rentedMovieKey = {};
-        this.noMovies = true;
-        this.ngOnInit();
-    }
-    
 }
+
 
 @Component({
     selector: 'rent-info-dialog',
@@ -112,18 +122,26 @@ export class RentComponent {
         </div>
         <div mat-dialog-actions>
             <button mat-raised-button (click)="onNoClick()" tabindex="-1">Close</button>
+            <button mat-raised-button color="primary" (click)="return(data);" tabindex="-1">Return</button>
         </div>
     `,
   })
   export class rentInfoDialog {
-  
+
     constructor(
         public dialogRef: MatDialogRef<rentInfoDialog>,
         @Inject(MAT_DIALOG_DATA) public data: any
-    ) { }
+    ) { 
+
+    }
 
     onNoClick(): void {
         this.dialogRef.close();
     }
-  
+    
+    return(movie) {
+        movie.return(movie);
+        this.onNoClick();
+    }
+
   }

@@ -24,7 +24,8 @@
           </div>
       
           <mat-header-row *matHeaderRowDef="displayedColumnKeys"></mat-header-row>
-          <mat-row *matRowDef="let row; columns: displayedColumnKeys;"></mat-row>
+          <mat-row class="data-row" *matRowDef="let row; columns: displayedColumnKeys;" 
+            (click)="edit(row);" ></mat-row>
         </mat-table>
 
         <!-- Paginator -->

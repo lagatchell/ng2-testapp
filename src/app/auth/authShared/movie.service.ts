@@ -3,6 +3,7 @@ import * as firebase from 'firebase';
 
 import { Movie } from './movie';
 import {MatSnackBar} from '@angular/material';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class MovieService {
@@ -10,6 +11,29 @@ export class MovieService {
     constructor(
         public snackBar: MatSnackBar
     ){}
+
+    getMovies() {
+        return Observable.fromPromise(firebase.database().ref('movies/').once('value').then((snapshot) => { 
+            let tmp: string[] = snapshot.val();
+            return Object.keys(tmp).map(key => tmp[key])
+        }));
+    }
+
+    getMovieById(movieID) {
+        return Observable.fromPromise(firebase.database().ref('movies/' + movieID).once('value')
+            .then((snapshot)=> {
+                let tmp = snapshot.val();
+                let transform = Object.keys(tmp).map(key => tmp[key]);
+                let title = transform[5];
+                let desc = transform[4];
+                let duration = transform[0];
+                let imgTitle = transform[2];
+                let img = transform[3];
+                let id = transform[1];
+                let rentedMovie = new Movie (title, desc, duration, imgTitle, img, id);
+                return rentedMovie;         
+            }));
+    }
 
     createMovie(movie: Movie) {
         const self = this;

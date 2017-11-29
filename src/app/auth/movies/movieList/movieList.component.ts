@@ -6,7 +6,9 @@ import { MovieService } from '../../authShared/movie.service';
 import { UserService } from '../../authShared/user.service';
 import { RentService } from '../../authShared/rent.service';
 import { WishListService } from '../../authShared/wishlist.service';
-import { Movie } from '../../authShared/movie'; 
+import { Movie } from '../../authShared/movie';
+
+import { Observable } from 'rxjs';
 
 @Component({
     templateUrl: './movieList.component.html', 
@@ -23,7 +25,9 @@ export class MovieListComponent {
         public movieSVC: MovieService,
         public userSVC: UserService,
         public dialog: MatDialog
-    ){}
+    ){
+        this.movies = new Array<Movie>();
+    }
 
     ngOnInit(){
         this.user = this.userSVC.authUser;
@@ -31,13 +35,12 @@ export class MovieListComponent {
     }
 
     getMovies() {
-        let dbRef = firebase.database().ref('movies/');
-        dbRef.once('value')
-            .then((snapshot)=> {
-                let tmp: string[] = snapshot.val();
-                this.movies = Object.keys(tmp).map(key => tmp[key])
-                this.loading = false;
-            });
+        const self = this;
+        let sub = this.movieSVC.getMovies().subscribe(movies => {
+            self.movies = movies;
+            self.loading = false;
+            sub.unsubscribe();
+        });
     }
 
     info(movie: Movie): void {

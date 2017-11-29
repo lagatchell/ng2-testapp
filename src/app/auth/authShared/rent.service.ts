@@ -3,14 +3,31 @@ import * as firebase from 'firebase';
 
 import {MatSnackBar} from '@angular/material';
 import { HistoryService } from './history.service';
+import { UserService } from './user.service';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class RentService {
 
     constructor(
         public snackBar: MatSnackBar,
-        public historySVC: HistoryService
+        public historySVC: HistoryService,
+        public userSVC: UserService
     ){}
+
+    getRentedMovieIDs() {
+        const self = this;
+        return Observable.fromPromise(firebase.database().ref('rented/'+ self.userSVC.authUser.uid).once('value')
+            .then((snapshot)=> {
+                if (snapshot.val() !== null) {
+                    let tmp: string[] = snapshot.val();
+                    return Object.keys(tmp).map(key => tmp[key]);
+                }
+                else {
+                    return null;
+                }
+            }));
+    }
 
     rentMovie(userID, movie) {
         const self = this;

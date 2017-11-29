@@ -14,7 +14,9 @@ import * as firebase from 'firebase';
 import { UserService } from '../authShared/user.service';
 import { WishListService } from '../authShared/wishlist.service';
 import { RentService } from '../authShared/rent.service';
+import { MovieService } from '../authShared/movie.service';
 import { Movie } from '../authShared/movie';
+import { Observable } from 'rxjs';
 
 @Component({
     templateUrl: './wishlist.component.html', 
@@ -35,10 +37,15 @@ export class WishListComponent {
     movieIDs: any[];
     wishlistMovies: any[];
 
-    constructor(private userSVC: UserService, public wishlistSVC: WishListService, public dialog: MatDialog)
+    constructor(
+        private userSVC: UserService, 
+        public wishlistSVC: WishListService, 
+        public dialog: MatDialog, 
+        public movieSVC: MovieService)
     { 
         this.authUser = this.userSVC.authUser;
         this.wishlistMovies = new Array<any>();
+        this.movieIDs = new Array<any>();
     }
 
     ngOnInit() {
@@ -58,26 +65,39 @@ export class WishListComponent {
 
     getWishlistMovieIDs() {
         const self = this;
-        let dbRef = firebase.database().ref('wishlist/'+ this.authUser.uid);
-        dbRef.once('value')
-            .then((snapshot)=> {
-                let tmp: string[] = snapshot.val();
-                self.movieIDs = Object.keys(tmp).map(key => tmp[key]);
-            })
-            .then(function(){
-                if(self.movieIDs.length >0)
-                {
-                    self.getWishlist(self)
-                        .then(function() {
-                            self.dataSource = new MatTableDataSource<any>(self.wishlistMovies);
-                            self.dataSource.sort = self.sort;
-                            self.dataSource.paginator = self.paginator;
-                        });
-                }
-            })
-            .catch(function(error){
-                console.log(error.message);
-            });
+        let sub = this.wishlistSVC.getWishlistMovieIDs().subscribe(wishlistMovieIDs => {
+            if (wishlistMovieIDs !== null) {
+                self.movieIDs = wishlistMovieIDs;
+                self.getWishlist(self)
+                    .then(function() {
+                        self.dataSource = new MatTableDataSource<any>(self.wishlistMovies);
+                        self.dataSource.sort = self.sort;
+                        self.dataSource.paginator = self.paginator;
+                        sub.unsubscribe();
+                    });
+            }
+        });
+    }
+
+    getWishlist(self) {
+        return new Promise(function(resolve, reject) {
+            for(let i=0, len=self.movieIDs.length; i<len; i++)
+            {       
+                let sub = self.movieSVC.getMovieById(self.movieIDs[i].movieId).subscribe(movie => {
+                    let wishlistMovie: any = {
+                        title: movie.title,
+                        movieId: movie.id,
+                        id: self.movieIDs[i].id
+                    };
+                    self.wishlistMovies.push(wishlistMovie);
+                    sub.unsubscribe();
+                    if(i == (self.movieIDs.length -1))
+                    {
+                        resolve();
+                    }
+                })
+            }
+        });
     }
 
     edit(row) {
@@ -100,36 +120,6 @@ export class WishListComponent {
                         }
                     }
                 }
-            }
-        });
-    }
-
-    getWishlist(self) {
-        return new Promise(function(resolve, reject) {
-            let index;
-
-            for(let i=0, len=self.movieIDs.length; i<len; i++)
-            {
-                let dbRef = firebase.database().ref('movies/' + self.movieIDs[i].movieId);
-                dbRef.once('value')
-                    .then((snapshot)=> {
-                        let tmp = snapshot.val();
-                        let transform = Object.keys(tmp).map(key => tmp[key]);
-                        let title = transform[5];
-                        let id = transform[1];
-                        let wishlistMovie: any = {
-                            title: title,
-                            movieId: id,
-                            id: self.movieIDs[i].id
-                        };
-                        self.wishlistMovies.push(wishlistMovie);
-                        
-                        if(i == (self.movieIDs.length -1))
-                        {
-                            resolve();
-                        }
-                        
-                    });
             }
         });
     }

@@ -5,8 +5,10 @@ import * as firebase from 'firebase';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 import { Movie } from '../authShared/movie';
+import { MovieService } from '../authShared/movie.service';
 import { UserService } from '../authShared/user.service';
 import { RentService } from '../authShared/rent.service';
+import { Observable } from 'rxjs';
 
 @Component({
     templateUrl: './rent.component.html', 
@@ -23,6 +25,7 @@ export class RentComponent {
     constructor(
         public userSVC: UserService,
         public rentSVC: RentService,
+        public movieSVC: MovieService,
         public dialog: MatDialog
     ){
         this.movies = [];
@@ -37,50 +40,27 @@ export class RentComponent {
 
     getRentedMovieIDs() {
         const self = this;
-        let dbRef = firebase.database().ref('rented/'+ this.user.uid);
-        dbRef.once('value')
-            .then((snapshot)=> {
-                if (snapshot.val() === null) {
-                    self.loading = false;
-                }
-                else {
-                    let tmp: string[] = snapshot.val();
-                self.movieIDs = Object.keys(tmp).map(key => tmp[key]);
-                }
-            })
-            .then(function(){
-                if(self.movieIDs.length >0)
-                {
-                    self.getRentedMovies(self);
-                }
-                else {
-                    self.loading = false;
-                }
-            })
-            .catch(function(error){
-                console.log(error.message);
-            });
+        let sub = this.rentSVC.getRentedMovieIDs().subscribe(movieIDs => {
+            if (movieIDs !== null) {
+                self.movieIDs = movieIDs;
+                self.getRentedMovies(self);
+            }
+            else {
+                self.loading = false;
+            }
+            sub.unsubscribe();
+        });
     }
 
     getRentedMovies(self) {
         for(let i=0, len=self.movieIDs.length; i<len; i++)
         {
-            let dbRef = firebase.database().ref('movies/' + self.movieIDs[i].movieId);
-            dbRef.once('value')
-                .then((snapshot)=> {
-                    let tmp = snapshot.val();
-                    let transform = Object.keys(tmp).map(key => tmp[key]);
-                    let title = transform[5];
-                    let desc = transform[4];
-                    let duration = transform[0];
-                    let imgTitle = transform[2];
-                    let img = transform[3];
-                    let id = transform[1];
-                    let rentedMovie = new Movie (title, desc, duration, imgTitle, img, id);
-                    self.movies.push(rentedMovie);
-                    self.rentedMovieKey[id] = self.movieIDs[i].id;
-                    self.loading = false;
-                });
+            let sub = self.movieSVC.getMovieById(self.movieIDs[i].movieId).subscribe(rentedMovie => {
+                self.movies.push(rentedMovie);
+                self.rentedMovieKey[rentedMovie.id] = self.movieIDs[i].id;
+                self.loading = false;
+                sub.unsubscribe();
+            });
         }
     }
 

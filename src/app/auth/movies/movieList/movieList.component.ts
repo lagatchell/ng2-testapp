@@ -17,6 +17,7 @@ export class MovieListComponent {
     
     movies: Movie[];
     user: any;
+    loading: boolean = true;
 
     constructor(
         public movieSVC: MovieService,
@@ -35,6 +36,7 @@ export class MovieListComponent {
             .then((snapshot)=> {
                 let tmp: string[] = snapshot.val();
                 this.movies = Object.keys(tmp).map(key => tmp[key])
+                this.loading = false;
             });
     }
 

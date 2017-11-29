@@ -19,3 +19,9 @@
 .footer-bg {
     background-color: transparent;
 }
+
+.loadingContainer {
+    text-align: center;
+    padding-left: 45%;
+    padding-top: 15%;
+}

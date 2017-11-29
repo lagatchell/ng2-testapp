@@ -65,7 +65,7 @@ export class UserService implements CanActivate {
         {
             this.loggedInUser = this.authUser.email;
             this.userLoggedIn = true;
-            this.router.navigate(['']);
+            this.router.navigate(['/auth/movies']);
         }
     }
 
@@ -84,11 +84,10 @@ export class UserService implements CanActivate {
         firebase.auth().signOut().then(function(){
             self.authUser = {};
             self.router.navigate(['home']);
-        }),
-        function(error) {
+            self.openSnackBar('Logged out', '');
+        }).catch(function(error) {
             self.openSnackBar('Unable to logout. Try again!', '');
-        }
-        this.openSnackBar('Logged out', '');
+        });
     }
 
     updateUser(user: User, newPassword) {
@@ -107,7 +106,8 @@ export class UserService implements CanActivate {
 
         if(typeof(newPassword) != 'undefined' && newPassword != null && newPassword != "")
         {
-            firebase.auth().currentUser.updatePassword(newPassword).catch(function(error){
+            firebase.auth().currentUser.updatePassword(newPassword)
+            .catch(function(error){
                 console.log(error.message);
             })
         }

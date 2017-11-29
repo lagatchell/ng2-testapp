@@ -18,6 +18,7 @@ export class RentComponent {
     movies: Movie[];
     user: any;
     rentedMovieKey: any;
+    loading: boolean = true;
 
     constructor(
         public userSVC: UserService,
@@ -39,16 +40,25 @@ export class RentComponent {
         let dbRef = firebase.database().ref('rented/'+ this.user.uid);
         dbRef.once('value')
             .then((snapshot)=> {
-                let tmp: string[] = snapshot.val();
+                if (snapshot.val() === null) {
+                    self.loading = false;
+                }
+                else {
+                    let tmp: string[] = snapshot.val();
                 self.movieIDs = Object.keys(tmp).map(key => tmp[key]);
+                }
             })
             .then(function(){
                 if(self.movieIDs.length >0)
                 {
                     self.getRentedMovies(self);
                 }
+                else {
+                    self.loading = false;
+                }
             })
-            .catch(function(){
+            .catch(function(error){
+                console.log(error.message);
             });
     }
 
@@ -69,6 +79,7 @@ export class RentComponent {
                     let rentedMovie = new Movie (title, desc, duration, imgTitle, img, id);
                     self.movies.push(rentedMovie);
                     self.rentedMovieKey[id] = self.movieIDs[i].id;
+                    self.loading = false;
                 });
         }
     }

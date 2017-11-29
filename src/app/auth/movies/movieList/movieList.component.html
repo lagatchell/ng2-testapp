@@ -5,6 +5,9 @@
         <h3>Movies</h3>
         <hr >
     </div>
+    <div class="loadingContainer" *ngIf="loading">
+        <mat-spinner></mat-spinner>
+    </div>
     <mat-grid-list cols="5" rowHeight="300px" gutterSize="15px">
         <div *ngFor="let movie of movies">
             <mat-grid-tile class="grid-tile" style="cursor: pointer;" (click)="info(movie)">
